@@ -1032,14 +1032,62 @@ Placa 3: Foto de la cartera TIRSA. Texto: "Detalles que suman: El pañuelo en la
                     }
                 });
                 
+                // --- 4. Textos Editables (Copy y Guion) ---
+                const copyBox = card.querySelector('.copy-box');
+                const guionBox = card.querySelector('.guion-box');
+                
+                if (copyBox) {
+                    copyBox.setAttribute('contenteditable', 'true');
+                    copyBox.title = 'Hacé clic para editar este texto';
+                    if (savedData.copy) copyBox.innerHTML = savedData.copy;
+                    copyBox.addEventListener('input', () => {
+                        savedData.copy = copyBox.innerHTML;
+                        saveData();
+                    });
+                }
+                
+                if (guionBox) {
+                    guionBox.setAttribute('contenteditable', 'true');
+                    guionBox.title = 'Hacé clic para editar este texto';
+                    if (savedData.guion) guionBox.innerHTML = savedData.guion;
+                    guionBox.addEventListener('input', () => {
+                        savedData.guion = guionBox.innerHTML;
+                        saveData();
+                    });
+                }
+
                 function saveData() {
                     localStorage.setItem(cardId, JSON.stringify({
                         status: statusSelect.value,
                         canva: canvaLink.value,
-                        cover: savedData.cover || null
+                        cover: savedData.cover || null,
+                        copy: savedData.copy || null,
+                        guion: savedData.guion || null
                     }));
                 }
             });
+            
+            // CSS para los elementos editables
+            const style = document.createElement('style');
+            style.innerHTML = `
+                [contenteditable="true"] {
+                    transition: all 0.2s;
+                    cursor: text;
+                    padding-right: 2rem !important;
+                    position: relative;
+                }
+                [contenteditable="true"]:hover {
+                    box-shadow: inset 0 0 0 2px rgba(235, 21, 102, 0.3);
+                    border-radius: 4px;
+                }
+                [contenteditable="true"]:focus {
+                    outline: none;
+                    background-color: #fff !important;
+                    box-shadow: inset 0 0 0 2px var(--magenta);
+                    border-radius: 4px;
+                }
+            `;
+            document.head.appendChild(style);
         });
     </script>
 </body>
