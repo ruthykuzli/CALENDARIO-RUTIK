@@ -435,6 +435,56 @@
             .post-card { padding: 1.5rem; }
             .mgmt-grid { grid-template-columns: 1fr; }
         }
+
+        .calendar-nav {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 3rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #eaeaea;
+        }
+        
+        .calendar-nav .nav-title {
+            margin-top: 0;
+            color: var(--magenta);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .calendar-nav .nav-title::before { content: '🔍'; }
+        
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+        
+        .nav-link-btn {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            color: #495057;
+            padding: 0.4rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .nav-link-btn:hover {
+            background: var(--magenta);
+            color: white;
+            border-color: var(--magenta);
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
     </style>
 </head>
 <body>
@@ -445,6 +495,14 @@
     </header>
 
     <div class="container">
+
+        <!-- NAVEGACIÓN RÁPIDA -->
+        <div class="calendar-nav" id="calendar-nav">
+            <h3 class="nav-title">Navegación Rápida</h3>
+            <div class="nav-links" id="nav-links-container">
+               <!-- Los links se generan por JS -->
+            </div>
+        </div>
 
         <!-- LUNES 23 -->
         <div class="day-section">
@@ -975,6 +1033,33 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // --- NAVEGACIÓN RÁPIDA (Mini Calendario) ---
+            const navContainer = document.getElementById('nav-links-container');
+            const daySections = document.querySelectorAll('.day-section');
+            
+            daySections.forEach((section, index) => {
+                const titleEl = section.querySelector('.day-title');
+                if (!titleEl) return;
+                
+                // Ignorar títulos generales de semanas (ej: "🔥 SEMANA 1...")
+                let rawText = titleEl.innerText || titleEl.textContent;
+                if (rawText.includes('SEMANA')) return;
+                
+                // Agregar ID a la sección para el ancla
+                const sectionId = 'day-' + index;
+                section.id = sectionId;
+                
+                // Limpiar el texto
+                let titleText = rawText.replace('📅', '').replace('🔥', '').trim();
+                
+                const btn = document.createElement('a');
+                btn.href = '#' + sectionId;
+                btn.className = 'nav-link-btn';
+                btn.innerText = titleText;
+                
+                navContainer.appendChild(btn);
+            });
+
             const postCards = document.querySelectorAll('.post-card');
             
             postCards.forEach((card, index) => {
