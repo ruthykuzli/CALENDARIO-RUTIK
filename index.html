@@ -601,29 +601,7 @@
         <div class="day-section">
             <h2 class="day-title">📅 MIÉRCOLES 1 DE ABRIL</h2>
             <div class="posts-grid">
-                <div class="post-card platform-instagram">
-                    <div class="card-header">
-                        <span class="platform-badge badge-ig">Instagram / TikTok</span>
-                        <span class="post-type">Reel Meme / "Girl Math"</span>
-                    </div>
-                    <div class="post-meta">
-                        <span class="meta-tag pilar">Pilar: 3 (Comunidad / Humor)</span>
-                        <span class="meta-tag objective">TOFU (Viralidad)</span>
-                    </div>
-                    <h3 class="post-title">Finanzas en pareja 💅</h3>
-                    <div class="content-section">
-                        <div class="content-label">Idea Principal</div>
-                        <p class="content-text">Humor de pareja financiando la compra de una minibag.</p>
-                    </div>
-                    <div class="content-section">
-                        <div class="content-label">Copy</div>
-                        <p class="content-text copy-box">Las matemáticas nunca fallaron, chicas. 😌 Etiquetá a tu novio/amiga para que vaya rompiendo el chanchito, que la minibag VENEZIA (tricolor) no se va a comprar sola. Últimas unidades en stock, link en bio. 💘 #GirlMath #HumorPareja #CarterasArgentina #AccesoriosDeModa #Humor</p>
-                    </div>
-                    <div class="content-section">
-                        <div class="content-label">Guion / Visuales</div>
-                        <p class="content-text guion-box">Texto en pantalla con tipografía League Gothic (#EB1566): "Si tu novio pone $29.000 y vos ponés $5.000, te llevás esta minibag. Yo no hago las reglas". Video tuyo posando súper canchera con la minibag VENEZIA, tirando un besito a cámara con un audio en tendencia divertido.</p>
-                    </div>
-                </div>
+                <!-- Post movido al Sábado 4 -->
             </div>
         </div>
 
@@ -687,6 +665,30 @@
         <div class="day-section">
             <h2 class="day-title">📅 SÁBADO 4 Y DOMINGO 5 DE ABRIL</h2>
             <div class="posts-grid">
+                <div class="post-card platform-instagram">
+                    <div class="card-header">
+                        <span class="platform-badge badge-ig">Instagram / TikTok</span>
+                        <span class="post-type">Reel Meme / "Girl Math"</span>
+                    </div>
+                    <div class="post-meta">
+                        <span class="meta-tag pilar">Pilar: 3 (Comunidad / Humor)</span>
+                        <span class="meta-tag objective">TOFU (Viralidad)</span>
+                    </div>
+                    <h3 class="post-title">Finanzas en pareja 💅</h3>
+                    <div class="content-section">
+                        <div class="content-label">Idea Principal</div>
+                        <p class="content-text">Humor de pareja financiando la compra de una minibag.</p>
+                    </div>
+                    <div class="content-section">
+                        <div class="content-label">Copy</div>
+                        <p class="content-text copy-box">Las matemáticas nunca fallaron, chicas. 😌 Etiquetá a tu novio/amiga para que vaya rompiendo el chanchito, que la minibag VENEZIA (tricolor) no se va a comprar sola. Últimas unidades en stock, link en bio. 💘 #GirlMath #HumorPareja #CarterasArgentina #AccesoriosDeModa #Humor</p>
+                    </div>
+                    <div class="content-section">
+                        <div class="content-label">Guion / Visuales</div>
+                        <p class="content-text guion-box">Texto en pantalla con tipografía League Gothic (#EB1566): "Si tu novio pone $29.000 y vos ponés $5.000, te llevás esta minibag. Yo no hago las reglas". Video tuyo posando súper canchera con la minibag VENEZIA, tirando un besito a cámara con un audio en tendencia divertido.</p>
+                    </div>
+                </div>
+
                 <div class="post-card platform-instagram">
                     <div class="card-header">
                         <span class="platform-badge badge-ig">Sábado (Historia)</span>
@@ -1115,8 +1117,8 @@
                 // --- 3. Cargar datos guardados en LocalStorage ---
                 const savedData = JSON.parse(localStorage.getItem(cardId)) || {};
                 
-                // Setear Lunes y Martes como 'PUBLICADO' por solicitud de la usuaria
-                if (index < 3) { 
+                // Setear Lunes, Martes y Jueves como 'PUBLICADO'
+                if (index < 4) { 
                     statusSelect.value = 'PUBLICADO';
                     savedData.status = 'PUBLICADO';
                 } else if (savedData.status) {
