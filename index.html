@@ -1028,7 +1028,7 @@ Texto: Dejá tu comentario abajo y si todavía te falta la cartera estructurada 
                 // Cover
                 if (data.cover && data.cover !== currentCoverBase64) {
                     currentCoverBase64 = data.cover;
-                    dropArea.style.backgroundImage = \`url(\${data.cover})\`;
+                    dropArea.style.backgroundImage = `url(${data.cover})`;
                     previewArea.style.display = 'none';
                 }
                 
@@ -1082,7 +1082,7 @@ Texto: Dejá tu comentario abajo y si todavía te falta la cartera estructurada 
                     reader.onload = (event) => {
                         const base64 = event.target.result;
                         currentCoverBase64 = base64;
-                        dropArea.style.backgroundImage = \`url(\${base64})\`;
+                        dropArea.style.backgroundImage = `url(${base64})`;
                         previewArea.style.display = 'none';
                         saveData();
                     };
@@ -1123,7 +1123,7 @@ Texto: Dejá tu comentario abajo y si todavía te falta la cartera estructurada 
         
         // CSS para los elementos editables
         const style = document.createElement('style');
-        style.innerHTML = \`
+        style.innerHTML = `
             [contenteditable="true"] {
                 transition: all 0.2s;
                 cursor: text;
@@ -1140,7 +1140,7 @@ Texto: Dejá tu comentario abajo y si todavía te falta la cartera estructurada 
                 box-shadow: inset 0 0 0 2px var(--magenta);
                 border-radius: 4px;
             }
-        \`;
+        `;
         document.head.appendChild(style);
     </script>
 </body>
