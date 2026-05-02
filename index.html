@@ -362,7 +362,8 @@
         }
 
         /* Status colors */
-        .status-curso { background-color: #f8f9fa; color: #495057; border-color: #ced4da; }
+        .status-grabado { background-color: #e2e3e5; color: #383d41; border-color: #d6d8db; }
+        .status-editado { background-color: #cce5ff; color: #004085; border-color: #b8daff; }
         .status-programado { background-color: #fff3cd; color: #856404; border-color: #ffeeba; }
         .status-publicado { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
 
@@ -940,7 +941,8 @@ Texto: Dejá tu comentario abajo y si todavía te falta la cartera estructurada 
                         <div class="mgmt-control">
                             <label>Estado</label>
                             <select class="status-select" id="status-${cardId}">
-                                <option value="EN CURSO">En Curso 📝</option>
+                                <option value="GRABADO">Grabado 🎥</option>
+                                <option value="EDITADO">Editado ✂️</option>
                                 <option value="PROGRAMADO">Programado ⏳</option>
                                 <option value="PUBLICADO">Publicado ✅</option>
                             </select>
@@ -985,7 +987,8 @@ Texto: Dejá tu comentario abajo y si todavía te falta la cartera estructurada 
                 }
                 const updateStatusColor = () => {
                     statusSelect.className = 'status-select';
-                    if (statusSelect.value === 'EN CURSO') statusSelect.classList.add('status-curso');
+                    if (statusSelect.value === 'GRABADO') statusSelect.classList.add('status-grabado');
+                    if (statusSelect.value === 'EDITADO') statusSelect.classList.add('status-editado');
                     if (statusSelect.value === 'PROGRAMADO') statusSelect.classList.add('status-programado');
                     if (statusSelect.value === 'PUBLICADO') statusSelect.classList.add('status-publicado');
                     saveData();
