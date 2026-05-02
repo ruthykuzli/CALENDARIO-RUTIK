@@ -897,205 +897,251 @@ Texto: Dejá tu comentario abajo y si todavía te falta la cartera estructurada 
         Hecho a medida con ❤️ para Rutik - Planificación de Mayo.
     </footer>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- NAVEGACIÓN RÁPIDA (Mini Calendario) ---
-            const navContainer = document.getElementById('nav-links-container');
-            const daySections = document.querySelectorAll('.day-section');
-            
-            daySections.forEach((section, index) => {
-                const titleEl = section.querySelector('.day-title');
-                if (!titleEl) return;
-                
-                // Ignorar títulos generales de semanas (ej: "🔥 SEMANA 1...")
-                let rawText = titleEl.innerText || titleEl.textContent;
-                if (rawText.includes('SEMANA')) return;
-                
-                // Agregar ID a la sección para el ancla
-                const sectionId = 'day-' + index;
-                section.id = sectionId;
-                
-                // Limpiar el texto
-                let titleText = rawText.replace('📅', '').replace('🔥', '').trim();
-                
-                const btn = document.createElement('a');
-                btn.href = '#' + sectionId;
-                btn.className = 'nav-link-btn';
-                btn.innerText = titleText;
-                
-                navContainer.appendChild(btn);
-            });
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-            const postCards = document.querySelectorAll('.post-card');
+        const firebaseConfig = {
+            databaseURL: "https://rutik-38c72-default-rtdb.firebaseio.com",
+            projectId: "rutik-38c72"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // --- NAVEGACIÓN RÁPIDA (Mini Calendario) ---
+        const navContainer = document.getElementById('nav-links-container');
+        const daySections = document.querySelectorAll('.day-section');
+        
+        daySections.forEach((section, index) => {
+            const titleEl = section.querySelector('.day-title');
+            if (!titleEl) return;
             
-            postCards.forEach((card, index) => {
-                const cardId = 'rutik-post-' + index;
+            // Ignorar títulos generales de semanas (ej: "🔥 SEMANA 1...")
+            let rawText = titleEl.innerText || titleEl.textContent;
+            if (rawText.includes('SEMANA')) return;
+            
+            // Agregar ID a la sección para el ancla
+            const sectionId = 'day-' + index;
+            section.id = sectionId;
+            
+            // Limpiar el texto
+            let titleText = rawText.replace('📅', '').replace('🔥', '').trim();
+            
+            const btn = document.createElement('a');
+            btn.href = '#' + sectionId;
+            btn.className = 'nav-link-btn';
+            btn.innerText = titleText;
+            
+            navContainer.appendChild(btn);
+        });
+
+        const postCards = document.querySelectorAll('.post-card');
+        
+        postCards.forEach((card, index) => {
+            const cardId = 'rutik-post-' + index;
+            
+            // --- 1. Crear Sección de Gestión ---
+            const mgmtSection = document.createElement('div');
+            mgmtSection.className = 'management-section';
+            mgmtSection.innerHTML = `
+                <div class="mgmt-header">Gestión de Publicación</div>
                 
-                // --- 1. Crear Sección de Gestión ---
-                const mgmtSection = document.createElement('div');
-                mgmtSection.className = 'management-section';
-                mgmtSection.innerHTML = `
-                    <div class="mgmt-header">Gestión de Publicación</div>
-                    
-                    <div class="mgmt-grid">
-                        <div class="mgmt-control">
-                            <label>Estado</label>
-                            <select class="status-select" id="status-${cardId}">
-                                <option value="GRABADO">Grabado 🎥</option>
-                                <option value="EDITADO">Editado ✂️</option>
-                                <option value="PROGRAMADO">Programado ⏳</option>
-                                <option value="PUBLICADO">Publicado ✅</option>
-                            </select>
-                        </div>
-                        
-                        <div class="mgmt-control">
-                            <label>Enlace de Canva / Drive</label>
-                            <div class="link-input-wrapper">
-                                <input type="url" class="canva-link" id="link-${cardId}" placeholder="Pegá el link acá...">
-                                <a href="#" target="_blank" class="open-link-btn" id="open-${cardId}" style="display:none;" title="Abrir Link">🔗</a>
-                            </div>
-                        </div>
+                <div class="mgmt-grid">
+                    <div class="mgmt-control">
+                        <label>Estado</label>
+                        <select class="status-select" id="status-${cardId}">
+                            <option value="GRABADO">Grabado 🎥</option>
+                            <option value="EDITADO">Editado ✂️</option>
+                            <option value="PROGRAMADO">Programado ⏳</option>
+                            <option value="PUBLICADO">Publicado ✅</option>
+                        </select>
                     </div>
                     
                     <div class="mgmt-control">
-                        <label>Portada de Video / Foto</label>
-                        <div class="cover-upload-area" id="drop-${cardId}">
-                            <input type="file" id="file-${cardId}" accept="image/*" style="display:none;">
-                            <div class="cover-preview" id="preview-${cardId}">
-                                <span class="upload-icon">📸</span>
-                                <span>Clic para subir o cambiar portada</span>
-                            </div>
+                        <label>Enlace de Canva / Drive</label>
+                        <div class="link-input-wrapper">
+                            <input type="url" class="canva-link" id="link-${cardId}" placeholder="Pegá el link acá...">
+                            <a href="#" target="_blank" class="open-link-btn" id="open-${cardId}" style="display:none;" title="Abrir Link">🔗</a>
                         </div>
                     </div>
-                `;
+                </div>
                 
-                card.appendChild(mgmtSection);
+                <div class="mgmt-control">
+                    <label>Portada de Video / Foto</label>
+                    <div class="cover-upload-area" id="drop-${cardId}">
+                        <input type="file" id="file-${cardId}" accept="image/*" style="display:none;">
+                        <div class="cover-preview" id="preview-${cardId}">
+                            <span class="upload-icon">📸</span>
+                            <span>Clic para subir o cambiar portada</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            card.appendChild(mgmtSection);
+            
+            // --- 2. Referencias a elementos ---
+            const statusSelect = mgmtSection.querySelector(`#status-${cardId}`);
+            const canvaLink = mgmtSection.querySelector(`#link-${cardId}`);
+            const openLinkBtn = mgmtSection.querySelector(`#open-${cardId}`);
+            const fileInput = mgmtSection.querySelector(`#file-${cardId}`);
+            const previewArea = mgmtSection.querySelector(`#preview-${cardId}`);
+            const dropArea = mgmtSection.querySelector(`#drop-${cardId}`);
+            
+            const copyBox = card.querySelector('.copy-box');
+            const guionBox = card.querySelector('.guion-box');
+            
+            if (copyBox) {
+                copyBox.setAttribute('contenteditable', 'true');
+                copyBox.title = 'Hacé clic para editar este texto';
+            }
+            if (guionBox) {
+                guionBox.setAttribute('contenteditable', 'true');
+                guionBox.title = 'Hacé clic para editar este texto';
+            }
+
+            let isUpdatingFromFirebase = false;
+            let currentCoverBase64 = null;
+
+            // --- 3. Conexión a Firebase (Sync en tiempo real) ---
+            const postRef = ref(db, 'posts/' + cardId);
+            
+            onValue(postRef, (snapshot) => {
+                const data = snapshot.val();
+                if (!data) return;
                 
-                // --- 2. Referencias a elementos ---
-                const statusSelect = mgmtSection.querySelector(`#status-${cardId}`);
-                const canvaLink = mgmtSection.querySelector(`#link-${cardId}`);
-                const openLinkBtn = mgmtSection.querySelector(`#open-${cardId}`);
-                const fileInput = mgmtSection.querySelector(`#file-${cardId}`);
-                const previewArea = mgmtSection.querySelector(`#preview-${cardId}`);
-                const dropArea = mgmtSection.querySelector(`#drop-${cardId}`);
+                isUpdatingFromFirebase = true;
                 
-                // --- 3. Cargar datos guardados en LocalStorage ---
-                const savedData = JSON.parse(localStorage.getItem(cardId)) || {};
-                
-                if (savedData.status) {
-                    statusSelect.value = savedData.status;
+                // Status
+                if (data.status && statusSelect.value !== data.status) {
+                    statusSelect.value = data.status;
+                    updateStatusColor(false);
                 }
-                const updateStatusColor = () => {
-                    statusSelect.className = 'status-select';
-                    if (statusSelect.value === 'GRABADO') statusSelect.classList.add('status-grabado');
-                    if (statusSelect.value === 'EDITADO') statusSelect.classList.add('status-editado');
-                    if (statusSelect.value === 'PROGRAMADO') statusSelect.classList.add('status-programado');
-                    if (statusSelect.value === 'PUBLICADO') statusSelect.classList.add('status-publicado');
-                    saveData();
-                };
-                statusSelect.addEventListener('change', updateStatusColor);
-                updateStatusColor();
                 
                 // Link
-                if (savedData.canva) {
-                    canvaLink.value = savedData.canva;
-                    openLinkBtn.href = savedData.canva;
-                    openLinkBtn.style.display = 'flex';
+                if (data.canva !== undefined && canvaLink.value !== data.canva) {
+                    canvaLink.value = data.canva;
+                    updateLinkButton();
                 }
-                canvaLink.addEventListener('input', (e) => {
-                    let val = e.target.value;
-                    if (val) {
-                        if (!val.startsWith('http://') && !val.startsWith('https://')) {
-                            val = 'https://' + val;
-                        }
-                        openLinkBtn.href = val;
-                        openLinkBtn.style.display = 'flex';
-                    } else {
-                        openLinkBtn.style.display = 'none';
-                    }
-                    saveData();
-                });
                 
-                // Portada
-                if (savedData.cover) {
-                    dropArea.style.backgroundImage = `url(${savedData.cover})`;
+                // Cover
+                if (data.cover && data.cover !== currentCoverBase64) {
+                    currentCoverBase64 = data.cover;
+                    dropArea.style.backgroundImage = \`url(\${data.cover})\`;
                     previewArea.style.display = 'none';
                 }
                 
-                dropArea.addEventListener('click', () => fileInput.click());
+                // Textos
+                if (data.copy && copyBox && copyBox.innerHTML !== data.copy) {
+                    copyBox.innerHTML = data.copy;
+                }
+                if (data.guion && guionBox && guionBox.innerHTML !== data.guion) {
+                    guionBox.innerHTML = data.guion;
+                }
                 
-                fileInput.addEventListener('change', (e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                        const reader = new FileReader();
-                        reader.onload = (event) => {
-                            const base64 = event.target.result;
-                            dropArea.style.backgroundImage = `url(${base64})`;
-                            previewArea.style.display = 'none';
-                            savedData.cover = base64; // Guarda en el objeto actual
-                            saveData();
-                        };
-                        reader.readAsDataURL(file);
+                isUpdatingFromFirebase = false;
+            });
+            
+            const updateStatusColor = (shouldSave = true) => {
+                statusSelect.className = 'status-select';
+                if (statusSelect.value === 'GRABADO') statusSelect.classList.add('status-grabado');
+                if (statusSelect.value === 'EDITADO') statusSelect.classList.add('status-editado');
+                if (statusSelect.value === 'PROGRAMADO') statusSelect.classList.add('status-programado');
+                if (statusSelect.value === 'PUBLICADO') statusSelect.classList.add('status-publicado');
+                if (shouldSave) saveData();
+            };
+            
+            const updateLinkButton = () => {
+                let val = canvaLink.value;
+                if (val) {
+                    if (!val.startsWith('http://') && !val.startsWith('https://')) {
+                        val = 'https://' + val;
                     }
-                });
-                
-                // --- 4. Textos Editables (Copy y Guion) ---
-                const copyBox = card.querySelector('.copy-box');
-                const guionBox = card.querySelector('.guion-box');
-                
-                if (copyBox) {
-                    copyBox.setAttribute('contenteditable', 'true');
-                    copyBox.title = 'Hacé clic para editar este texto';
-                    if (savedData.copy) copyBox.innerHTML = savedData.copy;
-                    copyBox.addEventListener('input', () => {
-                        savedData.copy = copyBox.innerHTML;
-                        saveData();
-                    });
+                    openLinkBtn.href = val;
+                    openLinkBtn.style.display = 'flex';
+                } else {
+                    openLinkBtn.style.display = 'none';
                 }
-                
-                if (guionBox) {
-                    guionBox.setAttribute('contenteditable', 'true');
-                    guionBox.title = 'Hacé clic para editar este texto';
-                    if (savedData.guion) guionBox.innerHTML = savedData.guion;
-                    guionBox.addEventListener('input', () => {
-                        savedData.guion = guionBox.innerHTML;
-                        saveData();
-                    });
-                }
+            };
 
-                function saveData() {
-                    localStorage.setItem(cardId, JSON.stringify({
-                        status: statusSelect.value,
-                        canva: canvaLink.value,
-                        cover: savedData.cover || null,
-                        copy: savedData.copy || null,
-                        guion: savedData.guion || null
-                    }));
+            // Event Listeners for Saving
+            statusSelect.addEventListener('change', () => updateStatusColor(true));
+            
+            canvaLink.addEventListener('input', () => {
+                updateLinkButton();
+                saveData();
+            });
+            
+            dropArea.addEventListener('click', () => fileInput.click());
+            
+            fileInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const base64 = event.target.result;
+                        currentCoverBase64 = base64;
+                        dropArea.style.backgroundImage = \`url(\${base64})\`;
+                        previewArea.style.display = 'none';
+                        saveData();
+                    };
+                    reader.readAsDataURL(file);
                 }
             });
             
-            // CSS para los elementos editables
-            const style = document.createElement('style');
-            style.innerHTML = `
-                [contenteditable="true"] {
-                    transition: all 0.2s;
-                    cursor: text;
-                    padding-right: 2rem !important;
-                    position: relative;
-                }
-                [contenteditable="true"]:hover {
-                    box-shadow: inset 0 0 0 2px rgba(235, 21, 102, 0.3);
-                    border-radius: 4px;
-                }
-                [contenteditable="true"]:focus {
-                    outline: none;
-                    background-color: #fff !important;
-                    box-shadow: inset 0 0 0 2px var(--magenta);
-                    border-radius: 4px;
-                }
-            `;
-            document.head.appendChild(style);
+            if (copyBox) {
+                copyBox.addEventListener('input', saveData);
+                copyBox.addEventListener('blur', saveData);
+            }
+            if (guionBox) {
+                guionBox.addEventListener('input', saveData);
+                guionBox.addEventListener('blur', saveData);
+            }
+
+            // Debounce for save to prevent saving on every single keystroke rapidly
+            let saveTimeout;
+            function saveData() {
+                if (isUpdatingFromFirebase) return;
+                
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(() => {
+                    set(postRef, {
+                        status: statusSelect.value,
+                        canva: canvaLink.value,
+                        cover: currentCoverBase64,
+                        copy: copyBox ? copyBox.innerHTML : null,
+                        guion: guionBox ? guionBox.innerHTML : null
+                    });
+                }, 500);
+            }
+            
+            // Initial call
+            updateStatusColor(false);
+            updateLinkButton();
         });
+        
+        // CSS para los elementos editables
+        const style = document.createElement('style');
+        style.innerHTML = \`
+            [contenteditable="true"] {
+                transition: all 0.2s;
+                cursor: text;
+                padding-right: 2rem !important;
+                position: relative;
+            }
+            [contenteditable="true"]:hover {
+                box-shadow: inset 0 0 0 2px rgba(235, 21, 102, 0.3);
+                border-radius: 4px;
+            }
+            [contenteditable="true"]:focus {
+                outline: none;
+                background-color: #fff !important;
+                box-shadow: inset 0 0 0 2px var(--magenta);
+                border-radius: 4px;
+            }
+        \`;
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
